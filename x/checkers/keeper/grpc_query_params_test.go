@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
-	testkeeper 	"github.com/waelsy123/checkers/testutil/keeper"
+	testkeeper "github.com/waelsy123/checkers/testutil/keeper"
 	"github.com/waelsy123/checkers/x/checkers/types"
 )
 

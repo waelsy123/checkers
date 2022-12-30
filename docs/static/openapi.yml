@@ -52212,6 +52212,8 @@ definitions:
     title: >-
       SignatureCounts contains information about signature reporting for a
       number of blocks
+  waelsy123.checkers.checkers.MsgCreatePostResponse:
+    type: object
   waelsy123.checkers.checkers.Params:
     type: object
     description: Params defines the parameters for the module.

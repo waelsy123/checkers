@@ -52425,6 +52425,11 @@ definitions:
     title: >-
       SignatureCounts contains information about signature reporting for a
       number of blocks
+  waelsy123.checkers.checkers.MsgCreateGameResponse:
+    type: object
+    properties:
+      gameIndex:
+        type: string
   waelsy123.checkers.checkers.MsgCreatePostResponse:
     type: object
   waelsy123.checkers.checkers.Params:

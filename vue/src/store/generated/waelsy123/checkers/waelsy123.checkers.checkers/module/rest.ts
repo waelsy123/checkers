@@ -24,6 +24,8 @@ export interface CheckersMsgPlayMoveResponse {
   winner?: string;
 }
 
+export type CheckersMsgRejectGameResponse = object;
+
 /**
  * Params defines the parameters for the module.
  */

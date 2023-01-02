@@ -52443,6 +52443,8 @@ definitions:
         format: int32
       winner:
         type: string
+  waelsy123.checkers.checkers.MsgRejectGameResponse:
+    type: object
   waelsy123.checkers.checkers.Params:
     type: object
     description: Params defines the parameters for the module.

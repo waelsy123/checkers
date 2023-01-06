@@ -2,6 +2,7 @@ package types_test
 
 import (
 	"testing"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
@@ -17,11 +18,12 @@ const (
 
 func GetStoredGame1() types.StoredGame {
 	return types.StoredGame{
-		Black: alice,
-		Red:   bob,
-		Index: "1",
-		Board: rules.New().String(),
-		Turn:  "b",
+		Black:    alice,
+		Red:      bob,
+		Index:    "1",
+		Board:    rules.New().String(),
+		Turn:     "b",
+		Deadline: "2023-01-07 23:04:17.996352 +0000 UTC",
 	}
 }
 
@@ -61,4 +63,11 @@ func TestGetAddressWrongRed(t *testing.T) {
 		err,
 		"red address is invalid: cosmos1jmjfq0tplp9tmx4v9uemw72y4d2wa5nr3xn9d4: decoding bech32 failed: invalid checksum (expected 3xn9d3 got 3xn9d4)")
 	require.EqualError(t, storedGame.Validate(), err.Error())
+}
+
+func TestCanGetDeadlineAsTime(t *testing.T) {
+	storedGame := GetStoredGame1()
+	deadline, err := storedGame.GetDeadlineAsTime()
+	require.Nil(t, err)
+	require.Equal(t, time.Time(time.Date(2023, time.January, 7, 23, 4, 17, 996352000, time.UTC)), deadline)
 }

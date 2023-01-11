@@ -43,6 +43,7 @@ func (k msgServer) CreateGame(goCtx context.Context, msg *types.MsgCreateGame) (
 	k.Keeper.SendToFifoTail(ctx, &storedGame, &systemInfo)
 	k.Keeper.SetStoredGame(ctx, storedGame)
 	k.Keeper.SetSystemInfo(ctx, systemInfo)
+	ctx.GasMeter().ConsumeGas(types.CreateGameGas, "Create game")
 
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(

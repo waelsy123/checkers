@@ -93,6 +93,7 @@ func TestCreate1GameEmitted(t *testing.T) {
 		Creator: alice,
 		Black:   bob,
 		Red:     wael,
+		Wager:   45,
 	})
 	require.NotNil(t, ctx)
 	events := sdk.StringifyEvents(ctx.EventManager().ABCIEvents())
@@ -105,6 +106,7 @@ func TestCreate1GameEmitted(t *testing.T) {
 			{Key: "game-index", Value: "1"},
 			{Key: "black", Value: bob},
 			{Key: "red", Value: wael},
+			{Key: "wager", Value: "45"},
 		},
 	}, event)
 }

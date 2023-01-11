@@ -33,7 +33,7 @@ type StoredGame struct {
 	AfterIndex  string `protobuf:"bytes,8,opt,name=afterIndex,proto3" json:"afterIndex,omitempty"`
 	Deadline    string `protobuf:"bytes,9,opt,name=deadline,proto3" json:"deadline,omitempty"`
 	Winner      string `protobuf:"bytes,10,opt,name=winner,proto3" json:"winner,omitempty"`
-	Wager       string `protobuf:"bytes,11,opt,name=wager,proto3" json:"wager,omitempty"`
+	Wager       uint64 `protobuf:"varint,11,opt,name=wager,proto3" json:"wager,omitempty"`
 }
 
 func (m *StoredGame) Reset()         { *m = StoredGame{} }
@@ -139,11 +139,11 @@ func (m *StoredGame) GetWinner() string {
 	return ""
 }
 
-func (m *StoredGame) GetWager() string {
+func (m *StoredGame) GetWager() uint64 {
 	if m != nil {
 		return m.Wager
 	}
-	return ""
+	return 0
 }
 
 func init() {
@@ -168,11 +168,11 @@ var fileDescriptor_8439c9c90688ff75 = []byte{
 	0x71, 0x7b, 0x76, 0x12, 0x7c, 0x04, 0x83, 0x10, 0xe7, 0xd6, 0xe1, 0x33, 0xed, 0xf2, 0x8f, 0xe6,
 	0xce, 0x15, 0x97, 0x00, 0x6a, 0xee, 0xd1, 0x55, 0x85, 0x1e, 0x15, 0xce, 0x0c, 0x1f, 0x42, 0x4f,
 	0xa3, 0xd2, 0xeb, 0xd8, 0xa0, 0xe8, 0xd3, 0x6b, 0xcd, 0xfc, 0x12, 0xba, 0x59, 0x6c, 0x0c, 0x3a,
-	0x01, 0xf4, 0x72, 0xa4, 0x72, 0xf7, 0x4c, 0x2d, 0xd0, 0x89, 0x41, 0xb5, 0x3b, 0xc1, 0xfd, 0xd3,
+	0x01, 0xf4, 0x72, 0xa4, 0x72, 0xf7, 0x4c, 0x2d, 0xd0, 0x89, 0x01, 0xed, 0x53, 0xc1, 0xfd, 0xd3,
 	0x57, 0x2e, 0xd9, 0x21, 0x97, 0xec, 0x27, 0x97, 0xec, 0xa3, 0x90, 0x8d, 0x43, 0x21, 0x1b, 0xdf,
 	0x85, 0x6c, 0xbc, 0x06, 0x8b, 0xd8, 0x2f, 0xb7, 0x61, 0x10, 0xd9, 0x64, 0x52, 0x7f, 0xf1, 0xa4,
 	0x3e, 0xc4, 0xee, 0x14, 0xfd, 0x7e, 0x83, 0x69, 0xd8, 0xa5, 0x73, 0x4c, 0x7f, 0x03, 0x00, 0x00,
-	0xff, 0xff, 0x28, 0x01, 0xbd, 0x80, 0xac, 0x01, 0x00, 0x00,
+	0xff, 0xff, 0xd5, 0x45, 0xb9, 0x2c, 0xac, 0x01, 0x00, 0x00,
 }
 
 func (m *StoredGame) Marshal() (dAtA []byte, err error) {
@@ -195,12 +195,10 @@ func (m *StoredGame) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Wager) > 0 {
-		i -= len(m.Wager)
-		copy(dAtA[i:], m.Wager)
-		i = encodeVarintStoredGame(dAtA, i, uint64(len(m.Wager)))
+	if m.Wager != 0 {
+		i = encodeVarintStoredGame(dAtA, i, uint64(m.Wager))
 		i--
-		dAtA[i] = 0x5a
+		dAtA[i] = 0x58
 	}
 	if len(m.Winner) > 0 {
 		i -= len(m.Winner)
@@ -329,9 +327,8 @@ func (m *StoredGame) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovStoredGame(uint64(l))
 	}
-	l = len(m.Wager)
-	if l > 0 {
-		n += 1 + l + sovStoredGame(uint64(l))
+	if m.Wager != 0 {
+		n += 1 + sovStoredGame(uint64(m.Wager))
 	}
 	return n
 }
@@ -679,10 +676,10 @@ func (m *StoredGame) Unmarshal(dAtA []byte) error {
 			m.Winner = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		case 11:
-			if wireType != 2 {
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Wager", wireType)
 			}
-			var stringLen uint64
+			m.Wager = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowStoredGame
@@ -692,24 +689,11 @@ func (m *StoredGame) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
+				m.Wager |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthStoredGame
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthStoredGame
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Wager = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStoredGame(dAtA[iNdEx:])

@@ -14,10 +14,15 @@ import (
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 	tmdb "github.com/tendermint/tm-db"
 	"github.com/waelsy123/checkers/x/checkers/keeper"
+	"github.com/waelsy123/checkers/x/checkers/testutil"
 	"github.com/waelsy123/checkers/x/checkers/types"
 )
 
 func CheckersKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
+	return CheckersKeeperWithMocks(t, nil)
+}
+
+func CheckersKeeperWithMocks(t testing.TB, bank *testutil.MockBankEscrowKeeper) (*keeper.Keeper, sdk.Context) {
 	storeKey := sdk.NewKVStoreKey(types.StoreKey)
 	memStoreKey := storetypes.NewMemoryStoreKey(types.MemStoreKey)
 
@@ -37,6 +42,7 @@ func CheckersKeeper(t testing.TB) (*keeper.Keeper, sdk.Context) {
 		"CheckersParams",
 	)
 	k := keeper.NewKeeper(
+		bank,
 		cdc,
 		storeKey,
 		memStoreKey,

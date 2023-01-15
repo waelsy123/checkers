@@ -14,7 +14,8 @@ import (
 	"github.com/waelsy123/checkers/x/checkers/types"
 )
 
-func setupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context, *gomock.Controller, *testutil.MockBankEscrowKeeper) {
+func setupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper.Keeper, context.Context,
+	*gomock.Controller, *testutil.MockBankEscrowKeeper) {
 	ctrl := gomock.NewController(t)
 	bankMock := testutil.NewMockBankEscrowKeeper(ctrl)
 	k, ctx := keepertest.CheckersKeeperWithMocks(t, bankMock)
@@ -26,6 +27,7 @@ func setupMsgServerWithOneGameForPlayMove(t testing.TB) (types.MsgServer, keeper
 		Black:   bob,
 		Red:     wael,
 		Wager:   45,
+		Denom:   "stake",
 	})
 	return server, *k, context, ctrl, bankMock
 }
@@ -74,6 +76,7 @@ func TestPlayMoveSameBlackRed(t *testing.T) {
 		Black:   bob,
 		Red:     bob,
 		Wager:   46,
+		Denom:   "coin",
 	})
 	playMoveResponse, err := msgServer.PlayMove(context, &types.MsgPlayMove{
 		Creator:   bob,
@@ -125,6 +128,7 @@ func TestPlayMoveSavedGame(t *testing.T) {
 		Deadline:    types.FormatDeadline(ctx.BlockTime().Add(types.MaxTurnDuration)),
 		Winner:      "*",
 		Wager:       45,
+		Denom:       "stake",
 	}, game1)
 }
 
@@ -170,6 +174,24 @@ func TestPlayMoveCalledBank(t *testing.T) {
 		ToX:       2,
 		ToY:       3,
 	})
+}
+
+func TestPlayMoveConsumedGas(t *testing.T) {
+	msgServer, _, context, ctrl, escrow := setupMsgServerWithOneGameForPlayMove(t)
+	ctx := sdk.UnwrapSDKContext(context)
+	defer ctrl.Finish()
+	escrow.ExpectAny(context)
+	before := ctx.GasMeter().GasConsumed()
+	msgServer.PlayMove(context, &types.MsgPlayMove{
+		Creator:   bob,
+		GameIndex: "1",
+		FromX:     1,
+		FromY:     2,
+		ToX:       2,
+		ToY:       3,
+	})
+	after := ctx.GasMeter().GasConsumed()
+	require.GreaterOrEqual(t, after, before+5_000)
 }
 
 func TestPlayMoveNotPlayer(t *testing.T) {
@@ -310,6 +332,7 @@ func TestPlayMove2SavedGame(t *testing.T) {
 		Deadline:    types.FormatDeadline(ctx.BlockTime().Add(types.MaxTurnDuration)),
 		Winner:      "*",
 		Wager:       45,
+		Denom:       "stake",
 	}, game1)
 }
 
@@ -458,6 +481,7 @@ func TestPlayMove3SavedGame(t *testing.T) {
 		Deadline:    types.FormatDeadline(ctx.BlockTime().Add(types.MaxTurnDuration)),
 		Winner:      "*",
 		Wager:       45,
+		Denom:       "stake",
 	}, game1)
 }
 

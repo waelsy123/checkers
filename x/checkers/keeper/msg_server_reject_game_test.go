@@ -27,6 +27,7 @@ func setupMsgServerWithOneGameForRejectGame(t testing.TB) (types.MsgServer, keep
 		Black:   bob,
 		Red:     wael,
 		Wager:   45,
+		Denom:   "stake",
 	})
 	return server, *k, context, ctrl, bankMock
 }
@@ -91,6 +92,19 @@ func TestRejectGameByBlackNoMoveEmitted(t *testing.T) {
 			{Key: "game-index", Value: "1"},
 		},
 	}, event)
+}
+
+func TestRejectGameByBlackRefundedGas(t *testing.T) {
+	msgServer, _, context, ctrl, _ := setupMsgServerWithOneGameForRejectGame(t)
+	ctx := sdk.UnwrapSDKContext(context)
+	defer ctrl.Finish()
+	before := ctx.GasMeter().GasConsumed()
+	msgServer.RejectGame(context, &types.MsgRejectGame{
+		Creator:   bob,
+		GameIndex: "1",
+	})
+	after := ctx.GasMeter().GasConsumed()
+	require.LessOrEqual(t, after, before-5_000)
 }
 
 func TestRejectGameByRedNoMove(t *testing.T) {

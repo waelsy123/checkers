@@ -1,13 +1,19 @@
 #!/usr/bin/env node
 
+// How to Use:
+//   npm install @osmonauts/telescope
+//   modify outPath and protoDirs and simply
+//   run: node codegen.js
+
 // source:
 //  https://github.com/confio/cosmjs-types/blob/main/scripts/codegen.js
 
 const { join } = require("path");
 const { writeFileSync } = require("fs");
+const { runInContext } = require("vm");
 const telescope = require("@osmonauts/telescope").default;
 
-const outPath = join(__dirname, "/../src/types/proto");
+const outPath = join(__dirname, "../src/types/generated");
 
 telescope({
   protoDirs: [
